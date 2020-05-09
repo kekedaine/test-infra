@@ -1,4 +1,4 @@
-FROM node:10.18.0-alpine
+FROM node:12-alpine
 
 ENV PORT=3000
 ENV SERVICE_NAME=
@@ -13,14 +13,10 @@ RUN apk add --no-cache --virtual .gyp \
         g++ \
     && apk del .gyp
 
-# COPY . .
-# RUN npm install
-# RUN npm run build
-
 ADD package.json /app/
 
 RUN yarn
 ADD . /app
 RUN yarn build
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
