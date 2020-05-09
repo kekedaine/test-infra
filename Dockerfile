@@ -13,9 +13,14 @@ RUN apk add --no-cache --virtual .gyp \
         g++ \
     && apk del .gyp
 
-COPY . .
+# COPY . .
+# RUN npm install
+# RUN npm run build
 
-RUN npm install
-RUN npm run build
+ADD package.json /app/
+
+RUN yarn
+ADD . /app
+RUN yarn build
 
 CMD ["npm", "start"]

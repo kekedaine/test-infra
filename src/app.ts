@@ -30,6 +30,7 @@ app.get("/api1", apiController.getApi);
 
 app.get("/info", apiController.getServiceInfo);
 app.get("/call-to-b", apiController.callRequestToServiceB);
+app.get("/call-to-c", apiController.callRequestToServiceC);
 
 
 export default app;

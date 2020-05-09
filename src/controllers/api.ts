@@ -2,34 +2,24 @@
 
 import { Response, Request, NextFunction } from "express";
 import ApiServiceB from "../http-clients/api-service-b"
+import ApiServiceC from "../http-clients/api-service-c"
 import Blurbird from "bluebird"
 import { SERVICE_NAME, PORT } from "../util/secrets"
 import axios from "axios"
+import _ from "lodash"
 
 var agent = require('elastic-apm-node').start({
     serviceName: SERVICE_NAME,
-    // secretToken: '',
     serverUrl: 'http://localhost:8200',
 })
-// import * as abc from 'elastic-apm-node-opentracing'
 const opentracing = require('elastic-apm-node-opentracing')
 var opentracingOrg = require('opentracing')
-
-// agent.init({
-//     serviceName: 'my-frontend-app', // Name of your frontend app
-//     serverUrl: 'https://example.com:8200', // APM Server host
-//     pageLoadTraceId: '${transaction.traceId}',
-//     pageLoadSpanId: '${transaction.ensureParentId()}',
-//     // pageLoadSampled: ${transaction.sampled}
-//   })
 
 const tracer = new opentracing(agent)
 
 function getCarrier(span: any, tracer: any) {
     console.log('run getCarrier');
     const carrier = {}
-    // console.log('span = ', span);
-    // console.log('tracer = ', tracer);
     tracer.inject(span.context(), opentracingOrg.FORMAT_HTTP_HEADERS, carrier)
     console.log('carrier = ', carrier);
     return carrier
@@ -56,15 +46,9 @@ export const getApi = (req: Request, res: Response) => {
 };
 
 export const getServiceInfo = async (req: Request, res: Response) => {
-
-    const parentSpan = createContinuationSpan(tracer, req, 'getServiceInfo')
-    const childSpan = tracer.startSpan('getServiceInfoChild', {childOf: parentSpan})
-
-    // const span = tracer.startSpan('getServiceInfo')
-
-    getCarrier(parentSpan, tracer)
-
-    await Blurbird.delay(500)
+    console.log(`getServiceInfo from: ${SERVICE_NAME}`);
+    const getServiceInfospan = createContinuationSpan(tracer, req, 'getServiceInfo')
+    await Blurbird.delay(_.random(100, 1000, false))
     res.json({
         status: "success",
         message: "hello word",
@@ -73,17 +57,14 @@ export const getServiceInfo = async (req: Request, res: Response) => {
             port: PORT
         }
     });
-    childSpan.finish()
-    console.log('Finish childSpan');
-
-    parentSpan.finish()
-    console.log('Finish parentSpan');
+    getServiceInfospan.finish()
+    console.log(`FINISH getServiceInfo from: ${SERVICE_NAME}`);
 };
 
 
 export const callRequestToServiceB = async (req: Request, res: Response) => {
     const span = tracer.startSpan(`callRequestToServiceB`)
-    await Blurbird.delay(600)
+    await Blurbird.delay(_.random(100, 500, false))
     let result = await ApiServiceB.get(
         '/info',
         undefined,
@@ -92,13 +73,26 @@ export const callRequestToServiceB = async (req: Request, res: Response) => {
         }
     )
 
-    // const result = await axios.get(`http://localhost:3002/info`, {
-    //     headers: getCarrier(span, tracer)
-    // })
-
     res.json({ status: "success", message: "callRequestToServiceB", result: result });
 
-    await Blurbird.delay(200)
+    await Blurbird.delay(_.random(50, 300, false))
     span.finish()
 };
 
+
+export const callRequestToServiceC = async (req: Request, res: Response) => {
+    const span = tracer.startSpan(`callRequestToServiceC`)
+    await Blurbird.delay(_.random(100, 500, false))
+    let result = await ApiServiceC.get(
+        '/info',
+        undefined,
+        {
+            headers: getCarrier(span, tracer)
+        }
+    )
+
+    res.json({ status: "success", message: "callRequestToServiceC", result: result });
+
+    await Blurbird.delay(_.random(50, 300, false))
+    span.finish()
+};
