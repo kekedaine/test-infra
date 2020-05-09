@@ -11,9 +11,9 @@ http://localhost:3001/call-to-b
 http://localhost:3001/call-to-c
 ```
 
-#### default port for API:
-Service A- PORT 3001:
-Service B- PORT 3002
-Service C- PORT 3003
+#### Default port for API:
+- Service A- PORT 3001
+- Service B- PORT 3002
+- Service C- PORT 3003
 
 
