@@ -47,7 +47,7 @@ export const getApi = (req: Request, res: Response) => {
 
 export const getServiceInfo = async (req: Request, res: Response) => {
     console.log(`getServiceInfo from: ${SERVICE_NAME}`);
-    const getServiceInfospan = createContinuationSpan(tracer, req, 'getServiceInfo')
+    const span = createContinuationSpan(tracer, req, 'getServiceInfo')
     await Blurbird.delay(_.random(100, 1000, false))
     res.json({
         status: "success",
@@ -57,14 +57,15 @@ export const getServiceInfo = async (req: Request, res: Response) => {
             port: PORT
         }
     });
-    getServiceInfospan.finish()
+    span.finish()
     console.log(`FINISH getServiceInfo from: ${SERVICE_NAME}`);
 };
 
 
 export const callRequestToServiceB = async (req: Request, res: Response) => {
-    const span = tracer.startSpan(`callRequestToServiceB`)
-    await Blurbird.delay(_.random(100, 500, false))
+    console.log(`callRequestToServiceB from: ${SERVICE_NAME}`);
+    const span = createContinuationSpan(tracer, req, 'callRequestToServiceB')
+    await Blurbird.delay(_.random(100, 1000, false))
     let result = await ApiServiceB.get(
         '/info',
         undefined,
@@ -74,15 +75,14 @@ export const callRequestToServiceB = async (req: Request, res: Response) => {
     )
 
     res.json({ status: "success", message: "callRequestToServiceB", result: result });
-
-    await Blurbird.delay(_.random(50, 300, false))
     span.finish()
 };
 
 
 export const callRequestToServiceC = async (req: Request, res: Response) => {
-    const span = tracer.startSpan(`callRequestToServiceC`)
-    await Blurbird.delay(_.random(100, 500, false))
+    console.log(`callRequestToServiceC from: ${SERVICE_NAME}`);
+    const span = createContinuationSpan(tracer, req, 'callRequestToServiceC')
+    await Blurbird.delay(_.random(100, 1000, false))
     let result = await ApiServiceC.get(
         '/info',
         undefined,
@@ -90,9 +90,6 @@ export const callRequestToServiceC = async (req: Request, res: Response) => {
             headers: getCarrier(span, tracer)
         }
     )
-
     res.json({ status: "success", message: "callRequestToServiceC", result: result });
-
-    await Blurbird.delay(_.random(50, 300, false))
     span.finish()
 };

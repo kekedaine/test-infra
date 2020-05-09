@@ -1,10 +1,5 @@
 FROM node:12-alpine
 
-ENV PORT=3000
-ENV SERVICE_NAME=
-
-EXPOSE $PORT
-
 WORKDIR /app
 
 RUN apk add --no-cache --virtual .gyp \
@@ -12,6 +7,10 @@ RUN apk add --no-cache --virtual .gyp \
         make \
         g++ \
     && apk del .gyp
+
+ENV PORT=3000
+ENV SERVICE_NAME=
+EXPOSE $PORT
 
 ADD package.json /app/
 
