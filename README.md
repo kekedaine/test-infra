@@ -3,6 +3,7 @@
 #### RUN
 ```
 docker run --rm -it -e SERVICE_NAME=SERVICE_A -e PORT=3001 -p 3001:3001 --name service_a kekedaine/test-infra
+docker build -t test-infra --target=builder-node-yarn .
 ```
 #### API:
 ```

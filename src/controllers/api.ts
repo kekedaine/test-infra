@@ -5,7 +5,6 @@ import ApiServiceB from "../http-clients/api-service-b"
 import ApiServiceC from "../http-clients/api-service-c"
 import Blurbird from "bluebird"
 import { SERVICE_NAME, PORT } from "../util/secrets"
-import axios from "axios"
 import _ from "lodash"
 
 var agent = require('elastic-apm-node').start({
@@ -61,7 +60,6 @@ export const getServiceInfo = async (req: Request, res: Response) => {
     console.log(`FINISH getServiceInfo from: ${SERVICE_NAME}`);
 };
 
-
 export const callRequestToServiceB = async (req: Request, res: Response) => {
     console.log(`callRequestToServiceB from: ${SERVICE_NAME}`);
     const span = createContinuationSpan(tracer, req, 'callRequestToServiceB')
@@ -74,10 +72,9 @@ export const callRequestToServiceB = async (req: Request, res: Response) => {
         }
     )
 
-    res.json({ status: "success", message: "callRequestToServiceB", result: result });
+    res.json({ status: "success", message: `callRequestToServiceB from: ${SERVICE_NAME}`, result: result });
     span.finish()
 };
-
 
 export const callRequestToServiceC = async (req: Request, res: Response) => {
     console.log(`callRequestToServiceC from: ${SERVICE_NAME}`);
@@ -90,6 +87,6 @@ export const callRequestToServiceC = async (req: Request, res: Response) => {
             headers: getCarrier(span, tracer)
         }
     )
-    res.json({ status: "success", message: "callRequestToServiceC", result: result });
+    res.json({ status: "success", message: `callRequestToServiceC from: ${SERVICE_NAME}`, result: result });
     span.finish()
 };
