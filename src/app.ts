@@ -32,5 +32,7 @@ app.get("/info", apiController.getServiceInfo);
 app.get("/call-to-b", apiController.callRequestToServiceB);
 app.get("/call-to-c", apiController.callRequestToServiceC);
 
+console.log('dai than thanh');
+
 
 export default app;
