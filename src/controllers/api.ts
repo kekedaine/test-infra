@@ -4,12 +4,13 @@ import { Response, Request, NextFunction } from "express";
 import ApiServiceB from "../http-clients/api-service-b"
 import ApiServiceC from "../http-clients/api-service-c"
 import Blurbird from "bluebird"
-import { SERVICE_NAME, PORT } from "../util/secrets"
+import { SERVICE_NAME, PORT, SERVICE_HOST } from "../util/secrets"
 import _ from "lodash"
 
 var agent = require('elastic-apm-node').start({
     serviceName: SERVICE_NAME,
-    serverUrl: 'http://localhost:8200',
+    secretToken: 'C5VSwgXztUO2J68cPY6F85n1PxGTsOYR',
+    serverUrl: `http://${SERVICE_HOST}:8200`,
 })
 const opentracing = require('elastic-apm-node-opentracing')
 var opentracingOrg = require('opentracing')

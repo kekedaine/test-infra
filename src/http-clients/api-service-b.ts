@@ -1,7 +1,8 @@
 import { BaseHttpclient } from "./base-httpclient";
+import { SERVICE_HOST } from "../util/secrets";
 
 export default new BaseHttpclient(
-    "http://localhost:3002",
+    `http://${SERVICE_HOST}:3002`,
     {
         headers: {
             "Content-Type": "application/json"

@@ -12,6 +12,7 @@ if (fs.existsSync(".env")) {
 export const ENVIRONMENT = process.env.NODE_ENV;
 const prod = ENVIRONMENT === "production"; // Anything else is treated as 'dev'
 
-export const SERVICE_NAME = process.env.SERVICE_NAME || `Server-${new Date()}`;
+export const SERVICE_NAME = process.env.SERVICE_NAME || `Server_${new Date().getTime()}`;
+export const SERVICE_HOST = process.env.SERVICE_HOST || "localhost";
 export const PORT = process.env.PORT;
 

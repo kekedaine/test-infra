@@ -7,6 +7,8 @@ import app from "./app";
  */
 app.use(errorHandler());
 
+console.log('skdjksajkd huu');
+
 /**
  * Start Express server.
  */
