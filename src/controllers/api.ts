@@ -54,6 +54,7 @@ export const getServiceInfo = async (req: Request, res: Response) => {
     res.json({
         status: "success",
         message: "hello word",
+        ...(req.query && { query: req.query }),
         data: {
             name: SERVICE_NAME,
             port: PORT
@@ -66,7 +67,7 @@ export const getServiceInfo = async (req: Request, res: Response) => {
 export const callRequestFromUrl = async (req: Request, res: Response) => {
     console.log(`callRequestFromUrl from: ${SERVICE_NAME}`);
     const url = req.query.url
-    if(!_.isString(url)) return res.status(404).json({ status: "fail", message: "invalid url" });
+    if (!_.isString(url)) return res.status(404).json({ status: "fail", message: "invalid url" });
     const span = createContinuationSpan(tracer, req, 'callRequestFromUrl')
     let result = await ApiServiceB.get(
         url,
