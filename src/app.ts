@@ -29,10 +29,9 @@ app.use(lusca.xssProtection(true));
 app.get("/api1", apiController.getApi);
 
 app.get("/info", apiController.getServiceInfo);
+app.get("/get_url", apiController.callRequestFromUrl);
 app.get("/call-to-b", apiController.callRequestToServiceB);
 app.get("/call-to-c", apiController.callRequestToServiceC);
-
-console.log('dai than thanh');
 
 
 export default app;

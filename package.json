@@ -37,9 +37,12 @@
         "express-flash": "0.0.2",
         "express-session": "^1.17.1",
         "express-validator": "^6.2.0",
+        "km-log4js-logstash-tcp": "^1.0.4",
         "lodash": "^4.17.15",
+        "log4js": "^6.2.1",
         "lusca": "^1.6.1",
         "opentracing": "^0.14.4",
+        "pino": "^6.2.1",
         "pug": "^2.0.4",
         "winston": "^3.2.1"
     },

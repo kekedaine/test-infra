@@ -1,18 +1,20 @@
-import winston from "winston";
-
-const options: winston.LoggerOptions = {
-    transports: [
-        new winston.transports.Console({
-            level: process.env.NODE_ENV === "production" ? "error" : "debug"
-        }),
-        new winston.transports.File({ filename: "debug.log", level: "debug" })
-    ]
-};
-
-const logger = winston.createLogger(options);
-
-if (process.env.NODE_ENV !== "production") {
-    logger.debug("Logging initialized at debug level");
-}
-
-export default logger;
+const log4js = require('log4js');
+log4js.configure({
+    appenders: {
+        logstash: {
+            type: 'km-log4js-logstash-tcp',
+            host: 'localhost',
+            port: 5000,
+            service: {
+                name: 'server_a',
+                ip: '1.1.2.3',
+                environment: process.env.NODE_ENV || 'development'
+            }
+        },
+        console: { type: 'console' }
+    },
+    categories: {
+        default: { appenders: ['logstash', 'console'], level: 'info' }
+    }
+});
+export default log4js.getLogger();

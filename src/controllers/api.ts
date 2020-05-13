@@ -6,6 +6,7 @@ import ApiServiceC from "../http-clients/api-service-c"
 import Blurbird from "bluebird"
 import { SERVICE_NAME, PORT, SERVICE_HOST } from "../util/secrets"
 import _ from "lodash"
+import logger from "../util/logger"
 
 var agent = require('elastic-apm-node').start({
     serviceName: SERVICE_NAME,
@@ -30,10 +31,10 @@ function createContinuationSpan(tracer: any, req: any, spanName: any) {
     if (incomingSpanContext == null) {
         console.log('createContinuationSpan > start new');
         return tracer.startSpan(spanName)
-    }else{
+    } else {
         console.log('createContinuationSpan > extract from Request');
     }
-    return tracer.startSpan(spanName, {childOf: incomingSpanContext})
+    return tracer.startSpan(spanName, { childOf: incomingSpanContext })
 }
 
 
@@ -47,6 +48,7 @@ export const getApi = (req: Request, res: Response) => {
 
 export const getServiceInfo = async (req: Request, res: Response) => {
     console.log(`getServiceInfo from: ${SERVICE_NAME}`);
+    logger.info(`getServiceInfo from: ${SERVICE_NAME} - ${new Date().getTime()}`, { cheese: 'gouda', biscuits: 'hobnob' });
     const span = createContinuationSpan(tracer, req, 'getServiceInfo')
     await Blurbird.delay(_.random(100, 1000, false))
     res.json({
@@ -59,6 +61,28 @@ export const getServiceInfo = async (req: Request, res: Response) => {
     });
     span.finish()
     console.log(`FINISH getServiceInfo from: ${SERVICE_NAME}`);
+};
+
+export const callRequestFromUrl = async (req: Request, res: Response) => {
+    console.log(`callRequestFromUrl from: ${SERVICE_NAME}`);
+    const url = req.query.url
+    if(!_.isString(url)) return res.status(404).json({ status: "fail", message: "invalid url" });
+    const span = createContinuationSpan(tracer, req, 'callRequestFromUrl')
+    let result = await ApiServiceB.get(
+        url,
+        undefined,
+        {
+            headers: getCarrier(span, tracer)
+        }
+    )
+
+    res.json({
+        status: "success",
+        message: `callRequestFromUrl from: ${SERVICE_NAME}`,
+        url,
+        result: result
+    });
+    span.finish()
 };
 
 export const callRequestToServiceB = async (req: Request, res: Response) => {
